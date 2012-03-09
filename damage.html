@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>ACV ダメージ計算</title>
+	<style type="text/css">
+		*{
+			margin: 0;
+			padding: 0;
+		}
+		body{
+			padding: 30px 50px;
+			font-size: 12px;
+		}
+		h1,h2,h3,h4,h5{
+			margin: 0 0 10px;
+		}
+		p,table,ul,ol{
+			margin: 0 0 10px;
+		}
+		table, th, td{
+			border-collapse: collapse;
+			border: 1px solid #999;
+		}
+		table{}
+			th, td{
+				padding: 5px;
+			}
+			th{
+				background: #ccc;
+			}
+		.calc_dmg{}
+			.calc_dmg td{
+				text-align:center;
+			}
+			.calc_dmg td.sign{
+				width: 10px;
+			}
+			.calc_dmg td.win{
+				background: #ccf;
+			}
+			.calc_dmg input{
+				width: 100px;
+			}
+			.calc_dmg input.invalid{
+				background: #fcc;
+			}
+	</style>
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+	<script type="text/coffeescript">
+		$(->
+			calc_dmg = (atk, def)->
+				Math.round if atk > def
+					atk * (1 - ((def / 100) * 2) / 100)
+				else
+					atk * ((29.5 - (def / 248.3)) / 100)
+
+			$('.calc_dmg tr').each ->
+				$row = $(@)
+				$cells = $row.find 'td'
+				$sign_cell = $cells.filter '.sign', 
+				$atk_cell = $cells.filter '.atk'
+				$def_cell = $cells.filter '.def'
+				$dmg_cell = $cells.filter '.dmg'
+				$atk = $atk_cell.find 'input'
+				$def = $def_cell.find 'input'
+				$dmg = $dmg_cell.find 'input'
+				$sources = $atk.add($def)
+
+				$sources.keyup (ev)->
+					console.log ev.type, ev.target, ev.target.value
+					$target = $(@)
+					$other = $sources.not $target
+					$cells.removeClass 'win'
+					if ev.target.value.match /^\d+$/
+						$target.removeClass 'invalid'
+						unless $other.is('.invalid')
+							atk_val = $atk.val() 
+							def_val = $def.val() 
+							$sign_cell.text if atk_val > def_val
+								console.log 'atk'
+								$atk_cell.addClass 'win'
+								'>'
+							else
+								console.log 'def'
+								$def_cell.addClass 'win'
+								if atk_val == def_val then '=' else '<'
+							$dmg.val calc_dmg(atk_val, def_val)
+					else
+						$target.addClass 'invalid'
+						$dmg.val ''
+
+
+		)
+	</script>
+	<script type="text/javascript" src="http://jashkenas.github.com/coffee-script/extras/coffee-script.js"></script>
+</head>
+<body>
+	<h1>ACV ダメージ計算</h1>
+	<section class="calc_dmg">
+		<p>攻撃=防御の時がよくわかんないので、とりあえず攻撃&lt防御の時と同じ計算にしてます。<br />
+		あと、小数点は四捨五入してます。</p>
+		<table>
+			<thead>
+				<tr>
+					<th>攻撃力</th>
+					<th></th>
+					<th>防御力</th>
+					<th></th>
+					<th>ダメージ</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td class="atk"><input type="text" value="" /></td>
+					<td class="sign">=</td>
+					<td class="def"><input type="text" value="" /></td>
+					<td>-></td>
+					<td class="dmg"><input type="text" value="" readonly="readonly" /></td>
+				</tr>
+				<tr>
+					<td class="atk"><input type="text" value="" /></td>
+					<td class="sign">=</td>
+					<td class="def"><input type="text" value="" /></td>
+					<td>-></td>
+					<td class="dmg"><input type="text" value="" readonly="readonly" /></td>
+				</tr>
+				<tr>
+					<td class="atk"><input type="text" value="" /></td>
+					<td class="sign">=</td>
+					<td class="def"><input type="text" value="" /></td>
+					<td>-></td>
+					<td class="dmg"><input type="text" value="" readonly="readonly" /></td>
+				</tr>
+				<tr>
+					<td class="atk"><input type="text" value="" /></td>
+					<td class="sign">=</td>
+					<td class="def"><input type="text" value="" /></td>
+					<td>-></td>
+					<td class="dmg"><input type="text" value="" readonly="readonly" /></td>
+				</tr>
+				<tr>
+					<td class="atk"><input type="text" value="" /></td>
+					<td class="sign">=</td>
+					<td class="def"><input type="text" value="" /></td>
+					<td>-></td>
+					<td class="dmg"><input type="text" value="" readonly="readonly" /></td>
+				</tr>
+			</tbody>
+		</table>
+	</section>
+</body>
+</html>
