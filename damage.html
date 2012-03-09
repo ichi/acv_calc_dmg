@@ -74,8 +74,8 @@
 					if ev.target.value.match /^\d+$/
 						$target.removeClass 'invalid'
 						unless $other.is('.invalid')
-							atk_val = $atk.val() 
-							def_val = $def.val() 
+							atk_val = $atk.val() - 0
+							def_val = $def.val() - 0
 							$sign_cell.text if atk_val > def_val
 								$atk_cell.addClass 'win'
 								'>'
