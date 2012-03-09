@@ -69,7 +69,7 @@
 			$calc_row.on 'keyup', 'input.source', (ev)->
 				$row = $(ev.delegateTarget)
 				$cells = $row.find('td').removeClass 'win'
-				$sign_cell = $cells.filter '.sign', 
+				$sign_cell = $cells.filter '.sign'
 				$sources = $row.find 'input.source'
 				$dmg = $row.find '.dmg'
 
