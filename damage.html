@@ -11,12 +11,16 @@
 		body{
 			padding: 30px 50px;
 			font-size: 12px;
+			line-height: 1.5;
 		}
 		h1,h2,h3,h4,h5{
 			margin: 0 0 10px;
 		}
 		p,table,ul,ol{
 			margin: 0 0 10px;
+		}
+		ul,ol{
+			margin-left: 16px;
 		}
 		table, th, td{
 			border-collapse: collapse;
@@ -39,6 +43,9 @@
 			.calc_dmg td.win{
 				background: #ccf;
 			}
+			.calc_dmg tfoot td{
+				text-align: right;
+			}
 			.calc_dmg input{
 				width: 100px;
 			}
@@ -55,38 +62,47 @@
 				else
 					atk * ((29.5 - (def / 248.3)) / 100)
 
-			$('.calc_dmg tr').each ->
-				$row = $(@)
-				$cells = $row.find 'td'
+			$tbody = $('.calc_dmg tbody')
+			$calc_row = $tbody.find('tr:first')
+
+
+			$calc_row.on 'keyup', 'input.source', (ev)->
+				$row = $(ev.delegateTarget)
+				$cells = $row.find('td').removeClass 'win'
 				$sign_cell = $cells.filter '.sign', 
-				$atk_cell = $cells.filter '.atk'
-				$def_cell = $cells.filter '.def'
-				$dmg_cell = $cells.filter '.dmg'
-				$atk = $atk_cell.find 'input'
-				$def = $def_cell.find 'input'
-				$dmg = $dmg_cell.find 'input'
-				$sources = $atk.add($def)
+				$sources = $row.find 'input.source'
+				$dmg = $row.find '.dmg'
 
-				$sources.keyup (ev)->
-					$target = $(@)
-					$other = $sources.not $target
-					$cells.removeClass 'win'
-					if ev.target.value.match /^\d+$/
-						$target.removeClass 'invalid'
-						unless $other.is('.invalid')
-							atk_val = $atk.val() - 0
-							def_val = $def.val() - 0
-							$sign_cell.text if atk_val > def_val
-								$atk_cell.addClass 'win'
-								'>'
-							else
-								$def_cell.addClass 'win'
-								if atk_val == def_val then '=' else '<'
-							$dmg.val calc_dmg(atk_val, def_val)
-					else
-						$target.addClass 'invalid'
-						$dmg.val ''
+				$target = $(ev.target)
 
+				if ev.target.value.match /^\d+$/
+					$target.removeClass 'invalid'
+					unless $sources.is('.invalid')
+						$atk = $sources.filter('.atk')
+						$def = $sources.filter('.def')
+						atk_val = $atk.val() - 0
+						def_val = $def.val() - 0
+						$sign_cell.text if atk_val > def_val
+							$atk.parents('td').addClass 'win'
+							'>'
+						else
+							$def.parents('td').addClass 'win'
+							if atk_val == def_val then '=' else '<'
+						$dmg.val calc_dmg(atk_val, def_val)
+				else
+					$target.addClass 'invalid'
+					$dmg.val ''
+
+			$('#append_row').click (ev)->
+				$clone = $calc_row.clone(true)
+				$clone.find('td')
+					.removeClass('win')
+					.filter('.sign')
+						.text('=')
+				$clone.find('input')
+					.removeClass('invalid')
+					.val('')
+				$tbody.append $clone
 
 		)
 	</script>
@@ -109,42 +125,23 @@
 			</thead>
 			<tbody>
 				<tr>
-					<td class="atk"><input type="text" value="" /></td>
+					<td><input type="text" value="" class="source atk" /></td>
 					<td class="sign">=</td>
-					<td class="def"><input type="text" value="" /></td>
+					<td><input type="text" value="" class="source def" /></td>
 					<td>-></td>
-					<td class="dmg"><input type="text" value="" readonly="readonly" /></td>
-				</tr>
-				<tr>
-					<td class="atk"><input type="text" value="" /></td>
-					<td class="sign">=</td>
-					<td class="def"><input type="text" value="" /></td>
-					<td>-></td>
-					<td class="dmg"><input type="text" value="" readonly="readonly" /></td>
-				</tr>
-				<tr>
-					<td class="atk"><input type="text" value="" /></td>
-					<td class="sign">=</td>
-					<td class="def"><input type="text" value="" /></td>
-					<td>-></td>
-					<td class="dmg"><input type="text" value="" readonly="readonly" /></td>
-				</tr>
-				<tr>
-					<td class="atk"><input type="text" value="" /></td>
-					<td class="sign">=</td>
-					<td class="def"><input type="text" value="" /></td>
-					<td>-></td>
-					<td class="dmg"><input type="text" value="" readonly="readonly" /></td>
-				</tr>
-				<tr>
-					<td class="atk"><input type="text" value="" /></td>
-					<td class="sign">=</td>
-					<td class="def"><input type="text" value="" /></td>
-					<td>-></td>
-					<td class="dmg"><input type="text" value="" readonly="readonly" /></td>
+					<td><input type="text" value="" class="dmg" readonly="readonly" /></td>
 				</tr>
 			</tbody>
+			<tfoot>
+				<tr>
+					<td colspan="5"><input type="button" value="append row" id="append_row" /></td>
+				</tr>
+			</tfoot>
 		</table>
+		<ul>
+			<li>だめーじ計算式: <a href="http://twitter.com/averade/status/177955034930216960" target="_blank">http://twitter.com/averade/status/177955034930216960</a></li>
+			<li>github: <a href="https://github.com/ichi/acv_calc_dmg" target="_blank">https://github.com/ichi/acv_calc_dmg</a></li>
+		</ul>
 	</section>
 </body>
 </html>
