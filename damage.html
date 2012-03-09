@@ -68,7 +68,6 @@
 				$sources = $atk.add($def)
 
 				$sources.keyup (ev)->
-					console.log ev.type, ev.target, ev.target.value
 					$target = $(@)
 					$other = $sources.not $target
 					$cells.removeClass 'win'
@@ -78,11 +77,9 @@
 							atk_val = $atk.val() 
 							def_val = $def.val() 
 							$sign_cell.text if atk_val > def_val
-								console.log 'atk'
 								$atk_cell.addClass 'win'
 								'>'
 							else
-								console.log 'def'
 								$def_cell.addClass 'win'
 								if atk_val == def_val then '=' else '<'
 							$dmg.val calc_dmg(atk_val, def_val)
